@@ -61,8 +61,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<div v-if="image.comment" :class="$style.indicator">ALT</div>
 			<div v-if="image.isSensitive" :class="$style.indicator" style="color: var(--MI_THEME-warn);" :title="i18n.ts.sensitive"><i class="ti ti-eye-exclamation"></i></div>
 		</div>
-		<button :class="[$style.menu, $style.menuBottom]" class="_button" @click.stop="showMenu"><i class="ti ti-dots" style="vertical-align: middle;"></i></button>
-		<button :class="[$style.menu, $style.menuTop]" class="_button" @click.stop="hide = true"><i class="ti ti-eye-off" style="vertical-align: middle;"></i></button>
+		<button :class="[$style.menu, $style.menuBottom]" class="_button" @click.stop="showMenu"><i class="ti ti-dots" style="vertical-align: middle;" aria-hidden="true"></i></button>
+		<button :class="[$style.menu, $style.menuTop]" class="_button" @click.stop="hide = true"><i class="ti ti-eye-off" style="vertical-align: middle;" aria-hidden="true"></i></button>
 	</template>
 </div>
 </template>
@@ -70,6 +70,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { watch, ref, computed } from 'vue';
 import * as Misskey from 'misskey-js';
+import type { MediaComponentExposes } from '@/types/media-component.js';
 import { getStaticImageUrl } from '@/utility/media-proxy.js';
 import bytes from '@/filters/bytes.js';
 import MkImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
@@ -138,6 +139,10 @@ function showMenu(ev: PointerEvent) {
 function onContextmenu(ev: PointerEvent) {
 	os.contextMenu(getFileMenu(props.image, (newHide) => { hide.value = newHide; }), ev);
 }
+
+defineExpose<MediaComponentExposes>({
+	isRevealed: () => !hide.value,
+});
 </script>
 
 <style lang="scss" module>
